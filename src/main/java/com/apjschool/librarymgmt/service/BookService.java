@@ -19,6 +19,7 @@ import com.apjschool.librarymgmt.dao.entity.Book;
 import com.apjschool.librarymgmt.dao.entity.BookIssued;
 import com.apjschool.librarymgmt.dto.BookDTO;
 import com.apjschool.librarymgmt.dto.BookIssuedDTO;
+import com.apjschool.librarymgmt.dto.BookSearchDTO;
 import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 import com.apjschool.librarymgmt.mapper.EntityDtoMapper;
 
@@ -36,12 +37,13 @@ public class BookService {
 
 	private EntityDtoMapper mapper = new EntityDtoMapper();
 
-	public ServiceResponse<Void> addBook(BookDTO bookDTO) {
-		ServiceResponse<Void> response = new ServiceResponse<>();
+	public ServiceResponse<BookDTO> addBook(BookDTO bookDTO) {
+		ServiceResponse<BookDTO> response = new ServiceResponse<>();
 
 		try {
 			Book bookEntity = mapper.populateBookEntity(bookDTO);
 			bookDaoImpl.addBook(bookEntity);
+			response.setResult(bookDTO);
 		} catch (HibernateException e) {
 			logger.error("HibernateException while adding Book ISDN " + bookDTO.getBookIsdn() + " " + e.getMessage());
 			response.addError("HibernateException while adding Book ISDN " + bookDTO.getBookIsdn() + " " + e.getMessage());
@@ -87,7 +89,7 @@ public class BookService {
 		ServiceResponse<List<BookDTO>> response = new ServiceResponse<>();
 		List<Book> bookEntityList = new ArrayList<>();
 		try {
-			if(searchFilter.getSearchFilter()!=null && searchFilter.getSearchFilter().size()>0){
+			if(searchFilter.getSearchFilter()!= null && searchFilter.getSearchFilter().size()>0){
 				bookEntityList = bookDaoImpl.searchBook(searchFilter);				
 			} else {
 				bookEntityList = bookDaoImpl.getAllBooks();	
@@ -111,7 +113,11 @@ public class BookService {
 		try {
 			Book bookEntity = bookDaoImpl.getBookById(id);
 			bookDTO = mapper.populateBookDTO(bookEntity);
-			response.setResult(bookDTO);
+			if(bookDTO!=null) {
+				response.setResult(bookDTO);
+			} else {
+				response.addError("Requested book with Id " + id + " not found.");
+			}			
 		} catch (HibernateException e) {
 			logger.error("Exception while searching Book" + e.getMessage());
 			response.addError("Exception while searching Book" + e.getMessage());
@@ -170,6 +176,28 @@ public class BookService {
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	public ServiceResponse<List<BookDTO>> searchBook(BookSearchDTO searchDTO) {
+		ServiceResponse<List<BookDTO>> response = new ServiceResponse<>();
+		List<Book> bookEntityList = new ArrayList<>();
+		try {
+			if(searchDTO!= null){
+				bookEntityList = bookDaoImpl.searchBook(searchDTO);				
+			} else {
+				bookEntityList = bookDaoImpl.getAllBooks();	
+			}
+			List<BookDTO> bookDtoList = mapper.populateBookDTOList(bookEntityList);
+			response.setResult(bookDtoList);
+		} catch (HibernateException e) {
+			logger.error("Exception while searching Book" + e.getMessage());
+			response.addError("Exception while searching Book" + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception while searching Book" + e.getMessage());
+			response.addError("Exception while searching Book" + e.getMessage());
 			e.printStackTrace();
 		}
 		return response;

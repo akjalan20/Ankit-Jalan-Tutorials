@@ -1,4 +1,4 @@
-package com.apjschool.library.config;
+package com.apjschool.librarymgmt.config;
 
 import java.util.HashMap;
 import java.util.Locale;

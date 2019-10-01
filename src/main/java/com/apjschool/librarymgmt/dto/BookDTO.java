@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-public class BookDTO {
+public class BookDTO implements BaseDTO{
 
 	private Integer bookId;
 	private String bookName;

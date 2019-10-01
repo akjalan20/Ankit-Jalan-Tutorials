@@ -28,7 +28,7 @@ public class InterceptorExample extends HandlerInterceptorAdapter {
 
 		Calendar cal = Calendar.getInstance();
 		int dayOfWeek = cal.get(cal.DAY_OF_WEEK);
-		if (dayOfWeek == 1) {
+		if (dayOfWeek == 6) {
 			response.getWriter().write("The website is down for maintenence on Sundays");
 			return false;
 		}

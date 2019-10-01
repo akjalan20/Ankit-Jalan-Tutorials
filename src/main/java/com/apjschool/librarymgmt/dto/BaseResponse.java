@@ -1,5 +1,8 @@
 package com.apjschool.librarymgmt.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL) // to exclude null properties in json response
 public class BaseResponse<T> {
 
 	private String status;

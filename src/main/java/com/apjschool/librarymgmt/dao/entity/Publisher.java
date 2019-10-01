@@ -20,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 public class Publisher {
 
 	private Integer publisherId;
-	private String PublisherName;
+	private String publisherName;
 	private String publisherPhoneNo;
 	private String publisherEmail;
 
@@ -39,11 +39,11 @@ public class Publisher {
 	}
 	@Column(name = "PUBLISHER_NAME")
 	public String getPublisherName() {
-		return PublisherName;
+		return publisherName;
 	}
 
 	public void setPublisherName(String publisherName) {
-		PublisherName = publisherName;
+		this.publisherName = publisherName;
 	}
 	@Column(name = "PHONE_NO")
 	public String getPublisherPhoneNo() {
@@ -106,7 +106,7 @@ public class Publisher {
 
 	@Override
 	public String toString() {
-		return "Publisher [publisherId=" + publisherId + ", PublisherName=" + PublisherName + ", publisherPhoneNo="
+		return "Publisher [publisherId=" + publisherId + ", PublisherName=" + publisherName + ", publisherPhoneNo="
 				+ publisherPhoneNo + ", publisherEmail=" + publisherEmail + ", books=" + books + ", publisherAddress="
 				+ publisherAddress + "]";
 	}

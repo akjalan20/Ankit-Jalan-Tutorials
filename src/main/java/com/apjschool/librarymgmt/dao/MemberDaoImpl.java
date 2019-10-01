@@ -16,9 +16,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.apjschool.librarymgmt.dao.entity.Book;
 import com.apjschool.librarymgmt.dao.entity.BookIssued;
 import com.apjschool.librarymgmt.dao.entity.BookIssuedId;
 import com.apjschool.librarymgmt.dao.entity.Member;
+import com.apjschool.librarymgmt.dto.BookSearchDTO;
+import com.apjschool.librarymgmt.dto.MemberSearchDTO;
 import com.apjschool.librarymgmt.dto.SearchFilter;
 import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 
@@ -125,11 +128,46 @@ public class MemberDaoImpl extends GenericDao<Member> implements MemberDao {
 		return member;
 	}
 
-	public Session getSession() {
-		HibernateTemplate template = getTemplate();
-		SessionFactory sessionFactory = template.getSessionFactory();
-		Session session = sessionFactory.getCurrentSession();
-		return session;
+	public List<Book> searchMember(MemberSearchDTO searchDTO) {
+		Session session = getSession();
+		List<Book> books = new ArrayList<>();
+		
+		Criteria criteria = session.createCriteria(Member.class);
+		Conjunction conjunction = Restrictions.conjunction();
+		Criterion criterion = null;
+
+		if (searchDTO != null) {
+			if (searchDTO.getRegistrationNo() != null) {
+				criterion = Restrictions.eq("registrationNo", searchDTO.getRegistrationNo());
+				conjunction.add(criterion);
+			}
+			if (searchDTO.getFirstName() != null && !searchDTO.getFirstName().isEmpty()) {
+				criterion = Restrictions.ilike("firstName", searchDTO.getFirstName(), MatchMode.ANYWHERE);
+				conjunction.add(criterion);
+			}
+			if (searchDTO.getLastName() != null && !searchDTO.getLastName().isEmpty()) {
+				criterion = Restrictions.ilike("lastName", searchDTO.getLastName(), MatchMode.ANYWHERE);
+				conjunction.add(criterion);
+			}
+			if (searchDTO.getPhoneNo() != null) {
+				criterion = Restrictions.eq("phoneNo", searchDTO.getPhoneNo());
+				conjunction.add(criterion);
+			}
+			if (searchDTO.getDateofBirth() != null) {
+				criterion = Restrictions.eq("dateofBirth", searchDTO.getDateofBirth());
+				conjunction.add(criterion);
+			}
+			if (searchDTO.getIdentificationNo() != null && !searchDTO.getIdentificationNo().isEmpty()) {
+				criterion = Restrictions.eq("identificationNo", searchDTO.getIdentificationNo());
+				conjunction.add(criterion);
+			}
+		}
+		/*
+		 * setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) removes duplicate records
+		 */
+		criteria.add(conjunction).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		books = criteria.list();
+		return books;
 	}
 
 }

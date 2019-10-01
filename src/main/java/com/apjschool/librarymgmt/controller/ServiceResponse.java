@@ -5,29 +5,29 @@ import java.util.List;
 
 public class ServiceResponse<T> {
 
-	private List<String> erros;
+	private List<String> errors;
 	private T result;
 
 	public void addError(String errorMessage) {
-		if (erros == null) {
-			erros = new ArrayList<>();
+		if (errors == null) {
+			errors = new ArrayList<>();
 		}
-		erros.add(errorMessage);
+		errors.add(errorMessage);
 	}
 
 	public Boolean isSuccess() {
-		if (erros == null || erros.isEmpty()) {
+		if (errors == null || errors.isEmpty()) {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
 	}
 
 	public List<String> getErros() {
-		return erros;
+		return errors;
 	}
 
 	public void setErros(List<String> erros) {
-		this.erros = erros;
+		this.errors = erros;
 	}
 
 	public T getResult() {
@@ -40,8 +40,8 @@ public class ServiceResponse<T> {
 
 	public String getAllErrorMessage() {
 		StringBuilder messageBuilder = new StringBuilder();
-		if (erros != null) {
-			for (String error : erros) {
+		if (errors != null) {
+			for (String error : errors) {
 				messageBuilder.append(error);
 			}
 		}

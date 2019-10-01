@@ -21,8 +21,9 @@ import com.apjschool.librarymgmt.dto.PublisherDTO;
 public class EntityDtoMapper {
 
 	public BookDTO populateBookDTO(Book entity) {
-		BookDTO bookDto = new BookDTO();
+		BookDTO bookDto = null;
 		if (entity != null) {
+			bookDto = new BookDTO();
 			bookDto.setBookId(entity.getBookId());
 			bookDto.setBookName(entity.getBookName());
 			bookDto.setBookIsdn(entity.getBookIsdn());

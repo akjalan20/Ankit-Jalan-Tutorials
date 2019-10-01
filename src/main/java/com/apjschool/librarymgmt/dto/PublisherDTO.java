@@ -6,7 +6,7 @@ import java.util.List;
 public class PublisherDTO {
 
 	private Integer publisherId;
-	private String PublisherName;
+	private String publisherName;
 	private String publisherPhoneNo;
 	private String publisherEmail;
 
@@ -22,11 +22,11 @@ public class PublisherDTO {
 	}
 
 	public String getPublisherName() {
-		return PublisherName;
+		return publisherName;
 	}
 
 	public void setPublisherName(String publisherName) {
-		PublisherName = publisherName;
+		this.publisherName = publisherName;
 	}
 
 	public String getPublisherPhoneNo() {

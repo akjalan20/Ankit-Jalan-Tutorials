@@ -51,6 +51,11 @@ public abstract class GenericDao<T> {
 		return template;
 	}
 	
-	
+	public Session getSession() {
+		HibernateTemplate template = getTemplate();
+		SessionFactory sessionFactory = template.getSessionFactory();
+		Session session = sessionFactory.getCurrentSession();
+		return session;
+	}
 
 }

@@ -2,17 +2,25 @@ package com.apjschool.librarymgmt.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SearchFilterRequest {
 
-    private List<SearchFilter> searchFilters;
+	@JsonProperty("SearchFilter")
+	@JsonInclude(value = Include.NON_NULL)
+	@JsonIgnoreProperties(ignoreUnknown = true)
+    private List<SearchFilter> searchFilter;
     private Integer maxMonthsExpiration;
 
     public List<SearchFilter> getSearchFilter() {
-        return searchFilters;
+        return searchFilter;
     }
 
     public void setSearchFilter(List<SearchFilter> searchFilters) {
-        this.searchFilters = searchFilters;
+        this.searchFilter = searchFilters;
     }
 
     public Integer getMaxMonthsExpiration() {
@@ -30,13 +38,13 @@ public class SearchFilterRequest {
 
         SearchFilterRequest that = (SearchFilterRequest) o;
 
-        if (!searchFilters.equals(that.searchFilters)) return false;
+        if (!searchFilter.equals(that.searchFilter)) return false;
         return maxMonthsExpiration.equals(that.maxMonthsExpiration);
     }
 
     @Override
     public int hashCode() {
-        int result = searchFilters.hashCode();
+        int result = searchFilter.hashCode();
         result = 31 * result + maxMonthsExpiration.hashCode();
         return result;
     }
@@ -44,7 +52,7 @@ public class SearchFilterRequest {
     @Override
     public String toString() {
         return "SearchFilterRequest{" +
-                "searchFilter=" + searchFilters +
+                "searchFilter=" + searchFilter +
                 ", maxMonthsExpiration=" + maxMonthsExpiration +
                 '}';
     }
