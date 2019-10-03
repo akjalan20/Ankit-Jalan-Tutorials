@@ -1,6 +1,7 @@
 package com.apjschool.librarymgmt.mapper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,14 +10,19 @@ import com.apjschool.librarymgmt.dao.entity.Address;
 import com.apjschool.librarymgmt.dao.entity.Author;
 import com.apjschool.librarymgmt.dao.entity.Book;
 import com.apjschool.librarymgmt.dao.entity.BookCategory;
+import com.apjschool.librarymgmt.dao.entity.BookIssued;
 import com.apjschool.librarymgmt.dao.entity.Language;
+import com.apjschool.librarymgmt.dao.entity.Member;
 import com.apjschool.librarymgmt.dao.entity.Publisher;
 import com.apjschool.librarymgmt.dto.AddressDTO;
 import com.apjschool.librarymgmt.dto.AuthorDTO;
 import com.apjschool.librarymgmt.dto.BookCategoryDTO;
 import com.apjschool.librarymgmt.dto.BookDTO;
+import com.apjschool.librarymgmt.dto.BookIssuedDTO;
 import com.apjschool.librarymgmt.dto.LanguageDTO;
+import com.apjschool.librarymgmt.dto.MemberDTO;
 import com.apjschool.librarymgmt.dto.PublisherDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EntityDtoMapper {
 
@@ -102,8 +108,8 @@ public class EntityDtoMapper {
 	public Author populateAuthorEntity(AuthorDTO authorDto) {
 		Author author = new Author();
 		if (authorDto != null) {
-			if(authorDto.getAuthorId()!=null)
-			author.setAuthorId(authorDto.getAuthorId());
+			if (authorDto.getAuthorId() != null)
+				author.setAuthorId(authorDto.getAuthorId());
 			author.setFirstName(authorDto.getFirstName());
 			author.setLastName(authorDto.getLastName());
 			author.setAuthorEmail(authorDto.getAuthorEmail());
@@ -189,14 +195,7 @@ public class EntityDtoMapper {
 			publisher.setPublisherEmail(entity.getPublisherEmail());
 			Address addrEntity = entity.getPublisherAddress();
 			if (addrEntity != null) {
-				publisher.setPublisherAddress(new AddressDTO());
-				publisher.getPublisherAddress().setAddressId(addrEntity.getAddressId());
-				publisher.getPublisherAddress().setAddressLine1(addrEntity.getAddressLine1());
-				publisher.getPublisherAddress().setAddressLine2(addrEntity.getAddressLine2());
-				publisher.getPublisherAddress().setCity(addrEntity.getCity());
-				publisher.getPublisherAddress().setState(addrEntity.getState());
-				publisher.getPublisherAddress().setCountry(addrEntity.getCountry());
-				publisher.getPublisherAddress().setPinCode(addrEntity.getPinCode());
+				publisher.setPublisherAddress(populateAddressDto(addrEntity));
 			}
 		}
 		return publisher;
@@ -214,42 +213,191 @@ public class EntityDtoMapper {
 
 	public List<AuthorDTO> populateAuthorDTOList(List<Author> authorList) {
 		List<AuthorDTO> authorDtoList = new ArrayList();
-		if(authorList!=null && authorList.size()>0){
-			for(Author author: authorList){
+		if (authorList != null && authorList.size() > 0) {
+			for (Author author : authorList) {
 				authorDtoList.add(populateAuthorDto(author));
 			}
 		}
 		return authorDtoList;
 	}
-	
+
 	public List<PublisherDTO> populatePublisherDTOList(List<Publisher> publisherList) {
 		List<PublisherDTO> publisherDtoList = new ArrayList();
-		if(publisherList!=null && publisherList.size()>0){
-			for(Publisher publisher: publisherList){
+		if (publisherList != null && publisherList.size() > 0) {
+			for (Publisher publisher : publisherList) {
 				publisherDtoList.add(populatePublisherDto(publisher));
 			}
 		}
 		return publisherDtoList;
 	}
-	
+
 	public List<LanguageDTO> populateLanguageDTOList(List<Language> languageList) {
 		List<LanguageDTO> LanguageDtoList = new ArrayList();
-		if(languageList!=null && languageList.size()>0){
-			for(Language language: languageList){
+		if (languageList != null && languageList.size() > 0) {
+			for (Language language : languageList) {
 				LanguageDtoList.add(populateLanguageDto(language));
 			}
 		}
 		return LanguageDtoList;
 	}
-	
+
 	public List<BookCategoryDTO> populateCategoryDTOList(List<BookCategory> categoryList) {
 		List<BookCategoryDTO> categoryDtoList = new ArrayList();
-		if(categoryList!=null && categoryList.size()>0){
-			for(BookCategory category: categoryList){
+		if (categoryList != null && categoryList.size() > 0) {
+			for (BookCategory category : categoryList) {
 				categoryDtoList.add(populateCategoryDto(category));
 			}
 		}
 		return categoryDtoList;
+	}
+
+	public List<MemberDTO> populateMemberDTOList(List<Member> memberEntityList) {
+		List<MemberDTO> memberDtoList = new ArrayList<MemberDTO>();
+		if (memberEntityList != null && memberEntityList.size() > 0) {
+			for (Member member : memberEntityList) {
+				memberDtoList.add(populateMemberDTO(member));
+			}
+		}
+		return memberDtoList;
+	}
+
+	public MemberDTO populateMemberDTO(Member member) {
+		MemberDTO memberDTO = null;
+		if (member != null) {
+			memberDTO = new MemberDTO();
+			memberDTO.setMemberId(member.getMemberId());
+			memberDTO.setRegistrationNo(member.getRegistrationNo());
+			memberDTO.setFirstName(member.getFirstName());
+			memberDTO.setLastName(member.getLastName());
+			memberDTO.setGender(member.getGender());
+			memberDTO.setHobby(member.getHobby());
+			memberDTO.setPhoneNo(member.getPhoneNo());
+			memberDTO.setDateofBirth(member.getDateofBirth());
+			memberDTO.setIdentificationType(member.getIdentificationType());
+			memberDTO.setIdentificationNo(member.getIdentificationNo());
+			
+			/*Set<BookIssued> bookIssuedEntityList = member.getBookIssued();
+			if (bookIssuedEntityList != null && bookIssuedEntityList.size() > 0) {
+				Set<BookIssuedDTO> boolIssuedDtoList = new HashSet<>();
+				for (BookIssued bookIssued : bookIssuedEntityList) {
+					boolIssuedDtoList.add(populateBookIssuedDto(bookIssued));
+				}
+				memberDTO.setBookIssued(boolIssuedDtoList);
+			}*/
+
+			Address address = member.getAddress();
+			if (address != null) {
+				memberDTO.setAddress(populateAddressDto(address));
+			}
+
+		}
+		return memberDTO;
+	}
+
+	public Member populateMemberEntity(MemberDTO memberDTO) {
+		Member member = null;
+		if (memberDTO != null) {
+			member = new Member();
+			member.setMemberId(memberDTO.getMemberId());
+			member.setRegistrationNo(memberDTO.getRegistrationNo());
+			member.setFirstName(memberDTO.getFirstName());
+			member.setLastName(memberDTO.getLastName());
+			member.setGender(memberDTO.getGender());
+			member.setHobby(memberDTO.getHobby());
+			member.setPhoneNo(memberDTO.getPhoneNo());
+			member.setDateofBirth(memberDTO.getDateofBirth());
+			member.setIdentificationType(memberDTO.getIdentificationType());
+			member.setIdentificationNo(memberDTO.getIdentificationNo());
+			
+			Set<BookIssuedDTO> bookIssuedDTOList = memberDTO.getBookIssued();
+			if (bookIssuedDTOList != null && bookIssuedDTOList.size() > 0) {
+				Set<BookIssued> bookIssued = new HashSet<>();
+				for (BookIssuedDTO bookIssuedDTO : bookIssuedDTOList) {
+					bookIssued.add(populateBookIssuedEntity(bookIssuedDTO));
+				}
+				member.setBookIssued(bookIssued);
+			}
+
+			AddressDTO address = memberDTO.getAddress();
+			if (address != null) {
+				member.setAddress(populateAddressEntity(address));
+			}
+
+		}
+		return member;
+	}
+
+	private BookIssued populateBookIssuedEntity(BookIssuedDTO bookIssuedDTO) {
+		BookIssued bookIssued = null;
+		if (bookIssuedDTO != null) {
+			bookIssued = new BookIssued();
+			bookIssued.setIssuedDate(bookIssuedDTO.getIssuedDate());
+			bookIssued.setDueDate(bookIssuedDTO.getDueDate());
+			bookIssued.setReturnedDate(bookIssuedDTO.getReturnedDate());
+			bookIssued.setLostFlag(bookIssuedDTO.getLostFlag());
+			MemberDTO memberDTO = bookIssuedDTO.getMemberDTO();
+			if (memberDTO != null) {
+				bookIssued.setMember(populateMemberEntity(memberDTO));
+			}
+			BookDTO bookDTO = bookIssuedDTO.getBookDTO();
+			if (bookDTO != null) {
+				bookIssued.setBook(populateBookEntity(bookDTO));
+			}
+		}
+
+		return bookIssued;
+	}
+
+	public BookIssuedDTO populateBookIssuedDto(BookIssued bookIssued) {
+
+		BookIssuedDTO bookIssuedDTO = null;
+		if (bookIssued != null) {
+			bookIssuedDTO = new BookIssuedDTO();
+			bookIssuedDTO.setIssuedDate(bookIssued.getIssuedDate());
+			bookIssuedDTO.setDueDate(bookIssued.getDueDate());
+			bookIssuedDTO.setReturnedDate(bookIssued.getReturnedDate());
+			bookIssuedDTO.setLostFlag(bookIssued.getLostFlag());
+			Member member = bookIssued.getMember();
+			if (member != null) {
+				bookIssuedDTO.setMemberDTO(populateMemberDTO(member));
+			}
+			Book book = bookIssued.getBook();
+			if (book != null) {
+				bookIssuedDTO.setBookDTO(populateBookDTO(book));
+			}
+		}
+
+		return bookIssuedDTO;
+	}
+
+	private Address populateAddressEntity(AddressDTO addressDTO) {
+		Address address = null;
+		if (addressDTO != null) {
+			address = new Address();
+			address.setAddressId(addressDTO.getAddressId());
+			address.setAddressLine1(addressDTO.getAddressLine1());
+			address.setAddressLine2(addressDTO.getAddressLine2());
+			address.setCity(addressDTO.getCity());
+			address.setState(addressDTO.getState());
+			address.setCountry(addressDTO.getCountry());
+			address.setPinCode(addressDTO.getPinCode());
+		}
+		return address;
+	}
+
+	public AddressDTO populateAddressDto(Address addrEntity) {
+		AddressDTO address = null;
+		if (addrEntity != null) {
+			address = new AddressDTO();
+			address.setAddressId(addrEntity.getAddressId());
+			address.setAddressLine1(addrEntity.getAddressLine1());
+			address.setAddressLine2(addrEntity.getAddressLine2());
+			address.setCity(addrEntity.getCity());
+			address.setState(addrEntity.getState());
+			address.setCountry(addrEntity.getCountry());
+			address.setPinCode(addrEntity.getPinCode());
+		}
+		return address;
 	}
 
 }

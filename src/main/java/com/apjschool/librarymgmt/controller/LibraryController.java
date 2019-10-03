@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.apjschool.librarymgmt.dao.entity.Book;
-import com.apjschool.librarymgmt.dao.entity.Member;
+import com.apjschool.librarymgmt.dto.MemberDTO;
 import com.apjschool.librarymgmt.service.MemberService;
 import com.apjschool.librarymgmt.util.CustomEditorExample;
 
@@ -74,8 +73,8 @@ public class LibraryController {
 	}
 
 	@RequestMapping(value = "/library/addMember", method = RequestMethod.POST)
-	public ModelAndView addMember(@ModelAttribute("member") @Valid Member member, BindingResult result) {
-		/* @Valid triggers JSR annotation validation placed in Member class */
+	public ModelAndView addMember(@ModelAttribute("member") @Valid MemberDTO member, BindingResult result) {
+		/* @Valid triggers JSR annotation validation placed in MemberDTO class */
 		ModelAndView modelAndView = null;
 		if (result.hasErrors()) {
 			modelAndView = new ModelAndView("AddMember");

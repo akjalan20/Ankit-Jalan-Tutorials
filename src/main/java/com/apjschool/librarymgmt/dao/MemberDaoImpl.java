@@ -28,8 +28,8 @@ import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 @Repository("MemberDaoImpl")
 public class MemberDaoImpl extends GenericDao<Member> implements MemberDao {
 
-	public void addMember(Member member) {
-		saveEntity(member);
+	public Integer addMember(Member member) {
+		return saveEntity(member);
 	}
 
 	public void updateMember(Member member) {
@@ -38,8 +38,7 @@ public class MemberDaoImpl extends GenericDao<Member> implements MemberDao {
 
 	public void deleteMember(Member member) {
 		try {
-			member.setDeleteFlag("Y");
-			updateEntity(member);
+			deleteEntity(member);
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -128,9 +127,9 @@ public class MemberDaoImpl extends GenericDao<Member> implements MemberDao {
 		return member;
 	}
 
-	public List<Book> searchMember(MemberSearchDTO searchDTO) {
+	public List<Member> searchMember(MemberSearchDTO searchDTO) {
 		Session session = getSession();
-		List<Book> books = new ArrayList<>();
+		List<Member> members = new ArrayList<>();
 		
 		Criteria criteria = session.createCriteria(Member.class);
 		Conjunction conjunction = Restrictions.conjunction();
@@ -161,13 +160,14 @@ public class MemberDaoImpl extends GenericDao<Member> implements MemberDao {
 				criterion = Restrictions.eq("identificationNo", searchDTO.getIdentificationNo());
 				conjunction.add(criterion);
 			}
+			
 		}
 		/*
 		 * setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) removes duplicate records
 		 */
 		criteria.add(conjunction).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		books = criteria.list();
-		return books;
+		members = criteria.list();
+		return members;
 	}
 
 }

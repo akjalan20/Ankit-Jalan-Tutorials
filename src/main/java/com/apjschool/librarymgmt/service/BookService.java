@@ -1,24 +1,20 @@
 package com.apjschool.librarymgmt.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.HibernateException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.apjschool.librarymgmt.controller.ServiceResponse;
 import com.apjschool.librarymgmt.dao.BookDaoImpl;
-import com.apjschool.librarymgmt.dao.BookIssuedDaoImpl;
 import com.apjschool.librarymgmt.dao.entity.Book;
-import com.apjschool.librarymgmt.dao.entity.BookIssued;
 import com.apjschool.librarymgmt.dto.BookDTO;
-import com.apjschool.librarymgmt.dto.BookIssuedDTO;
 import com.apjschool.librarymgmt.dto.BookSearchDTO;
 import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 import com.apjschool.librarymgmt.mapper.EntityDtoMapper;
@@ -28,11 +24,8 @@ import com.apjschool.librarymgmt.mapper.EntityDtoMapper;
 public class BookService {
 
 	@Autowired
-	private BookIssuedDaoImpl bookIssuedDaoImpl;
-
-	@Autowired
 	private BookDaoImpl bookDaoImpl;
-
+	
 	private static final Logger logger = LogManager.getLogger(BookService.class);
 
 	private EntityDtoMapper mapper = new EntityDtoMapper();
@@ -42,7 +35,10 @@ public class BookService {
 
 		try {
 			Book bookEntity = mapper.populateBookEntity(bookDTO);
-			bookDaoImpl.addBook(bookEntity);
+			if(bookEntity.getNoOfCopyIssued()==null) bookEntity.setNoOfCopyIssued(0);
+			Integer id = bookDaoImpl.addBook(bookEntity);
+			bookEntity = bookDaoImpl.getBookById(id);
+			bookDTO = mapper.populateBookDTO(bookEntity);
 			response.setResult(bookDTO);
 		} catch (HibernateException e) {
 			logger.error("HibernateException while adding Book ISDN " + bookDTO.getBookIsdn() + " " + e.getMessage());
@@ -140,43 +136,6 @@ public class BookService {
 		} catch (Exception e) {
 			logger.error("Exception while searching Book" + e.getMessage());
 			response.addError("Exception while searching Book" + e.getMessage());
-		}
-		return response;
-	}
-
-	public ServiceResponse<Void> issueBook(BookIssuedDTO bookIssuedDto) {
-		ServiceResponse<Void> response = new ServiceResponse<>();
-		try {
-			BookDTO bookDto = bookIssuedDto.getBook();
-			BookIssued bookIssued = new BookIssued();
-			if (bookDto.getNoOfCopies() > bookDto.getNoOfCopyIssued()) {
-				bookIssuedDaoImpl.saveEntity(bookIssued);
-				bookIssued.getBook().setNoOfCopyIssued(bookIssued.getBook().getNoOfCopyIssued() + 1);
-				bookDaoImpl.updateEntity(bookIssued.getBook());
-			}
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return response;
-	}
-
-	public ServiceResponse<Void> returnBook(BookIssuedDTO bookIssuedDto) {
-		ServiceResponse<Void> response = new ServiceResponse<>();
-		try {
-			BookDTO bookDto = bookIssuedDto.getBook();
-			BookIssued bookIssued = new BookIssued();
-			bookIssued.setReturnedDate(new Date());
-			bookIssuedDaoImpl.updateEntity(bookIssued);
-			if (bookIssued.getBook() != null) {
-				bookIssued.getBook().setNoOfCopyIssued(bookIssued.getBook().getNoOfCopyIssued() - 1);
-				bookDaoImpl.updateEntity(bookIssued.getBook());
-			}
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return response;
 	}

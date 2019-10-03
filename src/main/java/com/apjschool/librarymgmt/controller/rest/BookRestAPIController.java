@@ -1,6 +1,5 @@
-package com.apjschool.librarymgmt.controller;
+package com.apjschool.librarymgmt.controller.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,22 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.apjschool.librarymgmt.dto.AuthorDTO;
+import com.apjschool.librarymgmt.controller.ServiceResponse;
 import com.apjschool.librarymgmt.dto.BaseResponse;
-import com.apjschool.librarymgmt.dto.BookCategoryDTO;
 import com.apjschool.librarymgmt.dto.BookDTO;
-import com.apjschool.librarymgmt.dto.LanguageDTO;
-import com.apjschool.librarymgmt.dto.PublisherDTO;
 import com.apjschool.librarymgmt.dto.BookSearchDTO;
-import com.apjschool.librarymgmt.dto.SearchFilter;
 import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 import com.apjschool.librarymgmt.service.BookService;
-import com.apjschool.librarymgmt.service.MemberService;
-import com.apjschool.librarymgmt.service.MiscService;
 import com.apjschool.librarymgmt.util.LibraryUtil;
 
 @RestController
@@ -96,8 +88,11 @@ public class BookRestAPIController {
 		BaseResponse<List<BookDTO>> response = null;
 		ServiceResponse<List<BookDTO>> serviceResponse = bookService.searchBook(searchDTO);
 		if (serviceResponse != null && serviceResponse.isSuccess()) {
-			response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
-			
+			if(serviceResponse.getResult().size()>0) {
+				response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
+			} else {
+				response = libraryUtil.getBaseResponse(HttpStatus.OK, "No Records Found",  serviceResponse, null, null);
+			}
 		} else {
 			response = libraryUtil.getBaseResponse(HttpStatus.NOT_FOUND, serviceResponse.getAllErrorMessage(),  serviceResponse, null, null);
 		}
@@ -105,13 +100,13 @@ public class BookRestAPIController {
 	}
 
 	@RequestMapping(value = "/getBook", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BaseResponse> getBookRequestParamExample(@RequestParam String bookId) {
+	public ResponseEntity<BaseResponse> getBookByRequestParamExample(@RequestParam String bookId) {
 		logger.info("Entering LibrarySrviceController.getBook method");
 		return getBook(bookId);
 	}
 
 	@RequestMapping(value = "/getBook/{bookId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BaseResponse> getBookPathVariableExample(@PathVariable String bookId) {
+	public ResponseEntity<BaseResponse> getBookByPathVariableExample(@PathVariable String bookId) {
 		logger.info("Entering LibrarySrviceController.getBook method");
 		return getBook(bookId);
 	}
@@ -145,9 +140,45 @@ public class BookRestAPIController {
 					serviceResponse, "resource URI", ServletUriComponentsBuilder.fromCurrentRequest().path("/getBook/")
 					.buildAndExpand(serviceResponse.getResult().getBookId()).toUri().toString());
 		} else {
-			responseEntity = libraryUtil.getRestResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Books Added Successfully",
+			responseEntity = libraryUtil.getRestResponse(HttpStatus.INTERNAL_SERVER_ERROR, serviceResponse.getAllErrorMessage(),
 					serviceResponse, "resource URI", ServletUriComponentsBuilder.fromCurrentRequest().path("/getBook/")
 					.buildAndExpand(serviceResponse.getResult().getBookId()).toUri().toString());
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value = "/book", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BaseResponse> deleteBook(@RequestBody BookDTO bookDTO) {
+		logger.info("Entering LibrarySrviceController.deleteBook method");
+		BaseResponse<BookDTO> response = new BaseResponse<BookDTO>();
+
+		ResponseEntity<BaseResponse> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
+		ServiceResponse<Void> serviceResponse = bookService.deleteBook(bookDTO);
+		if (serviceResponse != null && serviceResponse.isSuccess()) {
+			responseEntity = libraryUtil.getRestResponse(HttpStatus.CREATED, "Books Deleted Successfully",
+					serviceResponse, null, null);
+		} else {
+			responseEntity = libraryUtil.getRestResponse(HttpStatus.INTERNAL_SERVER_ERROR, serviceResponse.getAllErrorMessage(),
+					serviceResponse, null, null);
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value = "/book", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BaseResponse> updateBook(@RequestBody BookDTO bookDTO) {
+		logger.info("Entering LibrarySrviceController.addBook method");
+		BaseResponse<Void> response = new BaseResponse<Void>();
+
+		ResponseEntity<BaseResponse> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
+		ServiceResponse<Void> serviceResponse = bookService.updateBook(bookDTO);
+		if (serviceResponse != null && serviceResponse.isSuccess()) {
+			responseEntity = libraryUtil.getRestResponse(HttpStatus.CREATED, "Books Updated Successfully",
+					serviceResponse, null, null);
+		} else {
+			responseEntity = libraryUtil.getRestResponse(HttpStatus.INTERNAL_SERVER_ERROR, serviceResponse.getAllErrorMessage(),
+					serviceResponse, null, null);
 		}
 		return responseEntity;
 	}

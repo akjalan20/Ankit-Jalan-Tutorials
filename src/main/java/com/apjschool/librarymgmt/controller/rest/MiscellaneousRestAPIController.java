@@ -1,4 +1,4 @@
-package com.apjschool.librarymgmt.controller;
+package com.apjschool.librarymgmt.controller.rest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.apjschool.librarymgmt.controller.ServiceResponse;
 import com.apjschool.librarymgmt.dto.AuthorDTO;
 import com.apjschool.librarymgmt.dto.BaseResponse;
 import com.apjschool.librarymgmt.dto.BookCategoryDTO;
@@ -30,12 +31,13 @@ import com.apjschool.librarymgmt.dto.SearchFilterRequest;
 import com.apjschool.librarymgmt.service.BookService;
 import com.apjschool.librarymgmt.service.MemberService;
 import com.apjschool.librarymgmt.service.MiscService;
+import com.apjschool.librarymgmt.util.LibraryUtil;
 
 @RestController
-@RequestMapping("/library")
-public class LibraryRestAPIController {
+@RequestMapping("/library/api")
+public class MiscellaneousRestAPIController {
 
-	private final Logger logger = LoggerFactory.getLogger(LibraryRestAPIController.class);
+	private final Logger logger = LoggerFactory.getLogger(MiscellaneousRestAPIController.class);
 
 	@Autowired
 	private BookService bookService;
@@ -45,22 +47,20 @@ public class LibraryRestAPIController {
 
 	@Autowired
 	private MiscService miscService;
+	
+	@Autowired
+	private LibraryUtil libraryUtil;
 
 	@RequestMapping(value = "/authors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public BaseResponse<List<AuthorDTO>> getAuthor() {
 		logger.info("Entering LibrarySrviceController.getAuthor method");
-		BaseResponse<List<AuthorDTO>> response = new BaseResponse();
+		BaseResponse<List<AuthorDTO>> response = null;
 
 		ServiceResponse<List<AuthorDTO>> serviceResponse = miscService.getAuthor();
 		if (serviceResponse != null && serviceResponse.isSuccess()) {
-			response.setStatus("Success");
-			response.setMessage("Authors Fetched Successfully");
-			response.setCode(0);
-			response.setResult(serviceResponse.getResult());
+			response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
 		} else {
-			response.setStatus("Failure");
-			response.setMessage(serviceResponse.getAllErrorMessage());
-			response.setCode(100);
+			response = libraryUtil.getBaseResponse(HttpStatus.NOT_FOUND, serviceResponse.getAllErrorMessage(),  serviceResponse, null, null);
 		}
 		return response;
 	}
@@ -72,14 +72,9 @@ public class LibraryRestAPIController {
 
 		ServiceResponse<List<PublisherDTO>> serviceResponse = miscService.getPublishers();
 		if (serviceResponse != null && serviceResponse.isSuccess()) {
-			response.setStatus("Success");
-			response.setMessage("Publishers Fetched Successfully");
-			response.setCode(0);
-			response.setResult(serviceResponse.getResult());
+			response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
 		} else {
-			response.setStatus("Failure");
-			response.setMessage(serviceResponse.getAllErrorMessage());
-			response.setCode(100);
+			response = libraryUtil.getBaseResponse(HttpStatus.NOT_FOUND, serviceResponse.getAllErrorMessage(),  serviceResponse, null, null);
 		}
 		return response;
 	}
@@ -91,14 +86,9 @@ public class LibraryRestAPIController {
 
 		ServiceResponse<List<LanguageDTO>> serviceResponse = miscService.getlanguages();
 		if (serviceResponse != null && serviceResponse.isSuccess()) {
-			response.setStatus("Success");
-			response.setMessage("Languages Fetched Successfully");
-			response.setCode(0);
-			response.setResult(serviceResponse.getResult());
+			response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
 		} else {
-			response.setStatus("Failure");
-			response.setMessage(serviceResponse.getAllErrorMessage());
-			response.setCode(100);
+			response = libraryUtil.getBaseResponse(HttpStatus.NOT_FOUND, serviceResponse.getAllErrorMessage(),  serviceResponse, null, null);
 		}
 		return response;
 	}
@@ -110,14 +100,9 @@ public class LibraryRestAPIController {
 
 		ServiceResponse<List<BookCategoryDTO>> serviceResponse = miscService.getBookCategory();
 		if (serviceResponse != null && serviceResponse.isSuccess()) {
-			response.setStatus("Success");
-			response.setMessage("BookCategory Fetched Successfully");
-			response.setCode(0);
-			response.setResult(serviceResponse.getResult());
+			response = libraryUtil.getBaseResponse(HttpStatus.FOUND, "Records Fetched Successfully",  serviceResponse, null, null);
 		} else {
-			response.setStatus("Failure");
-			response.setMessage(serviceResponse.getAllErrorMessage());
-			response.setCode(100);
+			response = libraryUtil.getBaseResponse(HttpStatus.NOT_FOUND, serviceResponse.getAllErrorMessage(),  serviceResponse, null, null);
 		}
 		return response;
 	}

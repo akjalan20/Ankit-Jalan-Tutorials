@@ -4,6 +4,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.apjschool.librarymgmt.util.IsValidHobby;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,8 +34,7 @@ public class MemberDTO {
 	private Date dateofBirth;
 	private String identificationType;
 	private String identificationNo;
-	private String deleteFlag;
-
+	
 	private AddressDTO addressDTO;
 	private Set<BookIssuedDTO> bookIssuedDTO = new HashSet<>(0);
 
@@ -48,6 +54,9 @@ public class MemberDTO {
 		this.registrationNo = registrationNo;
 	}
 
+	@Size(min=2, max=5)
+	@NotEmpty(message = "First name is compulsory")
+	@Pattern(regexp = "[a-z-A-Z]*")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -72,20 +81,22 @@ public class MemberDTO {
 		this.gender = gender;
 	}
 
+	@Past
 	public Date getDateofBirth() {
 		return dateofBirth;
 	}
 
+	public void setDateofBirth(Date dateofBirth) {
+		this.dateofBirth = dateofBirth;
+	}
+
+	@IsValidHobby(listValidHobbies="Music|Sports|Travel", message="Please provide a valid hobby; accepted hobbies are Music, Sports, Travel.")
 	public String getHobby() {
 		return hobby;
 	}
 
 	public void setHobby(String hobby) {
 		this.hobby = hobby;
-	}
-
-	public void setDateofBirth(Date dateofBirth) {
-		this.dateofBirth = dateofBirth;
 	}
 
 	public String getIdentificationType() {
@@ -102,14 +113,6 @@ public class MemberDTO {
 
 	public void setIdentificationNo(String identificationNo) {
 		this.identificationNo = identificationNo;
-	}
-
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
 	}
 
 	public AddressDTO getAddress() {

@@ -1,5 +1,6 @@
 package com.apjschool.librarymgmt.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -18,8 +19,9 @@ public abstract class GenericDao<T> {
 	@Autowired
 	private SessionFactory factory;
 
-	public void saveEntity(T obj) {
-		template.save(obj);
+	public Integer saveEntity(T obj) {
+		Integer obj1 = (Integer) template.save(obj);
+		return obj1;
 	}
 
 	public void updateEntity(T obj) {

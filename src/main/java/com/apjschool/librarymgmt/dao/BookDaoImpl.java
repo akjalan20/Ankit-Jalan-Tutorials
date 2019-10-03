@@ -35,8 +35,8 @@ public class BookDaoImpl extends GenericDao<Book> implements BookDao {
 	@Autowired
 	CategoryDaoImpl categoryDaoImpl;
 
-	public void addBook(Book book) {
-		saveEntity(book);
+	public Integer addBook(Book book) {
+		return saveEntity(book);		 
 	}
 
 	public void updateBook(Book book) {

@@ -11,16 +11,16 @@ public class BookIssuedDTO {
 	private Date returnedDate;	
 	private String lostFlag;
 	
-	public MemberDTO getMember() {
+	public MemberDTO getMemberDTO() {
 		return memberDTO;
 	}
-	public void setMember(MemberDTO memberDTO) {
+	public void setMemberDTO(MemberDTO memberDTO) {
 		this.memberDTO = memberDTO;
 	}
-	public BookDTO getBook() {
+	public BookDTO getBookDTO() {
 		return bookDTO;
 	}
-	public void setBook(BookDTO bookDTO) {
+	public void setBookDTO(BookDTO bookDTO) {
 		this.bookDTO = bookDTO;
 	}
 	public Date getIssuedDate() {

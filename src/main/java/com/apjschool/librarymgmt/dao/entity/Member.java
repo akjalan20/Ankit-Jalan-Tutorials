@@ -40,7 +40,6 @@ public class Member implements Serializable {
 	private Date dateofBirth;
 	private String identificationType;
 	private String identificationNo;
-	private String deleteFlag;	
 	
 	private Address address;
 	private Set<BookIssued> bookIssued = new HashSet<>(0);
@@ -161,15 +160,7 @@ public class Member implements Serializable {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	@Column(name = "DELETE_FLAG")
-	public String getDeleteFlag() {
-		return deleteFlag;
-	}
-
-	public void setDeleteFlag(String deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-
+	
 	/*@Override
 	public String toString() {
 		return "Member [memberId=" + memberId + ", registrationNo=" + registrationNo + ", firstName=" + firstName
